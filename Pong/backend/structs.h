@@ -2,6 +2,7 @@
 #define STRUCTS_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define SCREEN_WIDTH 858
 #define SCREEN_HEIGHT 525
@@ -16,6 +17,11 @@ typedef enum {
 	PADDLE_P1,
 	PADDLE_P2
 } paddle_mover;
+
+typedef enum {
+	GAMESTATE_NOCOIN,
+	GAMESTATE_COIN_INSERTED,
+} gamestate;
 
 typedef struct {
 	float x, y;
@@ -37,8 +43,15 @@ typedef struct {
 	ball_t ball;
 } board_t;
 
-board_t pong_initialize_board(void);
-void pong_move_player(player_t* player, float move); // move should be in the range of -1.0 - 1.0
+typedef struct {
+	board_t board;
+	gamestate state;
+} gamestate_t;
 
+gamestate_t pong_initialize_game(void);
+bool pong_check_collision(const player_t* player, const ball_t* ball);
+void pong_move_player(player_t* player, float move); // move should be in the range of -1.0 - 1.0
+void pong_insert_coin(gamestate_t* game);
+void pong_gamestate_step(gamestate_t* game);
 
 #endif

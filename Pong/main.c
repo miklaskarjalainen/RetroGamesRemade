@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <SDL2/SDL.h>
+#include <stdlib.h>
 
 #include "backend/structs.h"
 
@@ -26,13 +27,18 @@ int main(int argc, char** argv) {
 
 	bool done = false;
 	
-	board_t board = pong_initialize_board();
+	gamestate_t pong_game = pong_initialize_game();
 	uint8_t* keys = SDL_GetKeyboardState(NULL);
 
 	while (!done) {
 		SDL_Event ev;
 		while (SDL_PollEvent(&ev)) {
 			switch (ev.type) {
+			case SDL_KEYDOWN:
+				if (ev.key.keysym.scancode == SDL_SCANCODE_C) {
+					pong_insert_coin(&pong_game);
+				}
+				break;
 			case SDL_QUIT: {
 				done = true;
 				break;
@@ -42,16 +48,16 @@ int main(int argc, char** argv) {
 		}
 
 		// Logic
-			
 		float p1 = 0;
 		float p2 = 0;
 		if (keys[SDL_SCANCODE_W]) { p1 -= 1; }
 		if (keys[SDL_SCANCODE_S]) { p1 += 1; }
 		if (keys[SDL_SCANCODE_UP])	 { p2 -= 1; }
 		if (keys[SDL_SCANCODE_DOWN]) { p2 += 1; }
-		pong_move_player(&board.player1, p1);
-		pong_move_player(&board.player2, p2);
-
+		pong_move_player(&pong_game.board.player1, p1);
+		pong_move_player(&pong_game.board.player2, p2);
+		
+		pong_gamestate_step(&pong_game);
 
 		// Rendering
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -59,12 +65,12 @@ int main(int argc, char** argv) {
 			
 		SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
-		SDL_FRect rect = {board.ball.position.x, board.ball.position.y, BALL_SIZE, BALL_SIZE};
+		SDL_FRect rect = { pong_game.board.ball.position.x, pong_game.board.ball.position.y, BALL_SIZE, BALL_SIZE};
 		SDL_RenderFillRectF(renderer, &rect);
 			
-		rect = (SDL_FRect){board.player1.position.x, board.player1.position.y, PADDLE_WIDTH, PADDLE_HEIGHT};
+		rect = (SDL_FRect){ pong_game.board.player1.position.x, pong_game.board.player1.position.y, PADDLE_WIDTH, PADDLE_HEIGHT};
 		SDL_RenderFillRectF(renderer, &rect);
-		rect = (SDL_FRect){board.player2.position.x, board.player2.position.y, PADDLE_WIDTH, PADDLE_HEIGHT};
+		rect = (SDL_FRect){ pong_game.board.player2.position.x, pong_game.board.player2.position.y, PADDLE_WIDTH, PADDLE_HEIGHT};
 		SDL_RenderFillRectF(renderer, &rect);
 
 

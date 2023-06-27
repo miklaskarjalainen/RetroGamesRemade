@@ -91,13 +91,11 @@ void pong_gamestate_step(gamestate_t* game) {
 		}
 		// Top & Bottom Collision
 		if (game->board.ball.position.y <= GapSize) {
-			//game->board.ball.velocity.y = -game->board.ball.velocity.y;
+			game->board.ball.velocity.y = fabsf(game->board.ball.velocity.y);
 		}
-		/*
 		if (game->board.ball.position.y >= (SCREEN_HEIGHT - (GapSize + BALL_SIZE))) {
 			game->board.ball.velocity.y = -fabsf(game->board.ball.velocity.y);
 		}
-		*/
 
 		break;
 	}

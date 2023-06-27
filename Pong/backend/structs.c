@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <math.h>
 #include <time.h>
 #include "structs.h"
@@ -11,7 +12,7 @@ vec2f vec2f_generate_velocity(float speed) {
 	out.x = ((float)rand() / (float)(RAND_MAX / 2.0f)) - 1.0f;
 	out.y = ((float)rand() / (float)(RAND_MAX / 2.0f)) - 1.0f; // lower max value because we want the ball to move horizontally, not vertically.
 
-	float length = sqrtf(out.x * out.x + out.y + out.y);
+	float length = sqrtf(out.x * out.x + out.y * out.y);
 	out.x /= length;
 	out.y /= length;
 
